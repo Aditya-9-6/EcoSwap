@@ -1,12 +1,15 @@
 # EcoSwap 2.0 - Voice-Enabled Sustainability AI
 
-EcoSwap 2.0 is a Django-based web application that helps users find sustainable alternatives to everyday products using AI (Groq Llama-3).
+EcoSwap 2.0 is a Django-based web application that helps users find sustainable alternatives to everyday products using **Hybrid RAG AI** (Google Gemini + Kaggle Dataset).
+
+**🚀 Live Demo:** [https://ecoswap-1.onrender.com/](https://ecoswap-1.onrender.com/)
 
 ## Features
-- **Green Brain AI**: Finds eco-friendly alternatives with impact scores.
-- **Voice Command**: Use your microphone to search hands-free.
-- **Gamification**: Earn Eco-Points and track plastic saved.
-- **Dashboard**: Visual impact charts.
+- **🧠 Green Brain with RAG**: Combines a local knowledge base of 600+ verified products with Google Gemini AI for smart, accurate recommendations.
+- **🗣️ Voice Command**: Use your microphone to search hands-free.
+- **📊 Gamification**: Earn Eco-Points and track plastic saved.
+- **📈 Dashboard**: Visual impact charts.
+- **📱 Smart RAG Integration**: Checks `data/sustainable_products.csv` (Kaggle dataset) first before consulting AI, reducing hallucinations.
 
 ## Setup Instructions
 
@@ -52,5 +55,6 @@ EcoSwap 2.0 is a Django-based web application that helps users find sustainable 
 ## Tech Stack
 - Django 5.0
 - Tailwind CSS
-- Groq API (Llama-3)
+- **Google Gemini API** (Formerly Groq)
+- **RAG Architecture** (CSV + Generative AI)
 - Chart.js
