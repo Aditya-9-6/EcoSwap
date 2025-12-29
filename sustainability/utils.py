@@ -30,10 +30,41 @@ def get_eco_alternatives(product_name):
     try:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('gemini-1.5-flash')
+
+        # --- RAG: Retrieval Step ---
+        # 1. Load CSV (Simple linear search for demo, Vector DB better for large scale)
+        import csv
+        csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'sustainable_products.csv')
         
+        rag_context = ""
+        found_matches = []
+        
+        try:
+            with open(csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    # Simple keyword matching
+                    if product_name.lower() in row['Product'].lower() or product_name.lower() in row['Alternative'].lower():
+                        found_matches.append(row)
+                        if len(found_matches) >= 3: break # Limit context
+            
+            if found_matches:
+                rag_context = "Knowledge Base Recommendations:\n"
+                for match in found_matches:
+                    rag_context += f"- Alternative to {match['Product']}: {match['Alternative']} (Score: {match['ImpactScore']})\n"
+        except Exception as e:
+            print(f"RAG Error: {e}")
+
+        # --- Generation Step ---
         prompt = f"""
-        Find 3 sustainable alternatives to '{product_name}'.
-        Return ONLY valid JSON in this format:
+        User is looking for sustainable alternatives to: '{product_name}'.
+        
+        {rag_context}
+        
+        If the Knowledge Base recommendations above are relevant, INCLUDE them. 
+        If not, use your general knowledge to find better ones.
+        
+        Return exactly 3 alternatives as valid JSON:
         [
             {{
                 "name": "Product Name",
