@@ -6,17 +6,17 @@ def get_eco_alternatives(product_name):
     # Mock Data Fallback
     mock_data = [
         {
-            "name": "Bamboo Toothbrush (Mock)",
+            "name": "Bamboo Toothbrush",
             "impact_score": 9,
             "link": "https://www.google.com/search?q=bamboo+toothbrush"
         },
         {
-            "name": "Metal Straw (Mock)",
+            "name": "Metal Straw",
             "impact_score": 8,
             "link": "https://www.google.com/search?q=metal+straw"
         },
         {
-            "name": "Reusable Bottle (Mock)",
+            "name": "Reusable Bottle",
             "impact_score": 10,
             "link": "https://www.google.com/search?q=reusable+water+bottle"
         }
