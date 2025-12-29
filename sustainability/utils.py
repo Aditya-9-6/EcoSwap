@@ -85,7 +85,15 @@ def get_eco_alternatives(product_name):
         return data
     except Exception as e:
         print(f"Error fetching alternatives from Gemini: {e}. Returning Mock Data.")
-        return mock_data
+        # DEBUG: Show error in UI
+        return [
+            {
+                "name": f"Error: {str(e)[:50]}...",
+                "impact_score": 0,
+                "link": "#",
+                "description": f"Full error: {str(e)}. Check Render Logs."
+            }
+        ] + mock_data
 
 def analyze_image(image):
     return "Detected: Plastic Bottle"
