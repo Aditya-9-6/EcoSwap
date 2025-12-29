@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}My Impact Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">My Impact Dashboard</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- Impact Cards -->
+        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-green-500">
+            <div class="text-gray-500 text-sm font-semibold uppercase tracking-wider">Total Eco-Points</div>
+            <div class="text-4xl font-bold text-green-700 mt-2">{{ points }}</div>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-500">
+            <div class="text-gray-500 text-sm font-semibold uppercase tracking-wider">Plastic Saved</div>
+            <div class="text-4xl font-bold text-blue-700 mt-2">{{ plastic_saved }}g</div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Impact Visualization</h2>
+        <canvas id="impactChart" height="100"></canvas>
+    </div>
+
+    <!-- Recent History -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <h2 class="font-bold text-gray-700">Recent Searches</h2>
+        </div>
+        <ul class="divide-y divide-gray-100">
+            {% for search in recent_searches %}
+            <li class="p-6 hover:bg-gray-50 transition-colors flex justify-between items-center">
+                <div>
+                    <span class="block text-gray-800 font-semibold">{{ search.query }}</span>
+                    <span class="text-xs text-gray-500">{{ search.timestamp|date:"M d, Y" }}</span>
+                </div>
+                <span class="text-green-600 font-bold">+10 pts</span>
+            </li>
+            {% empty %}
+            <li class="p-6 text-gray-500 text-center">No searches yet. Start searching!</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    { { chart_data.labels | json_script; "chart-labels" } }
+    { { chart_data.data | json_script; "chart-data" } }
+
+    // Retrieve data from safe script tags
+    const chartLabels = JSON.parse(document.getElementById('chart-labels').textContent);
+    const chartData = JSON.parse(document.getElementById('chart-data').textContent);
+
+    const ctx = document.getElementById('impactChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Cumulative Plastic Saved (g)',
+                data: chartData,
+                backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                borderColor: 'rgba(34, 197, 94, 1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+    },
+        options, {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Grams (g)'
+                }
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        return `${context.dataset.label}: ${context.parsed.y}g`;
+                    }
+                }
+            }
+        }
+    }
+    ,);
+</script>
+{% endblock %}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EcoSwap{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+    <nav class="bg-green-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="{% url 'index' %}" class="text-2xl font-bold flex items-center">
+                <i class="fas fa-leaf mr-2"></i> EcoSwap
+            </a>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-4">
+                <a href="{% url 'index' %}" class="hover:text-green-200 transition-colors">Home</a>
+                <a href="{% url 'dashboard' %}" class="hover:text-green-200 transition-colors">Dashboard</a>
+                {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="hover:text-green-200 transition-colors">Logout</button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}" class="hover:text-green-200 transition-colors">Login</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-green-700 pb-4 px-4">
+            <a href="{% url 'index' %}" class="block py-2 hover:bg-green-600 rounded">Home</a>
+            <a href="{% url 'dashboard' %}" class="block py-2 hover:bg-green-600 rounded">Dashboard</a>
+            {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post" class="block w-full">
+                {% csrf_token %}
+                <button type="submit" class="text-left w-full py-2 hover:bg-green-600 rounded">Logout</button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" class="block py-2 hover:bg-green-600 rounded">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 EcoSwap. Built for a greener future.</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+    <script>
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        if (btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+
+</html>

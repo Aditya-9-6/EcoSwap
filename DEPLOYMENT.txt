@@ -1,0 +1,53 @@
+# Deployment Guide (Render / AWS)
+
+## Prerequisites
+- `gunicorn` is already in `requirements.txt`.
+- `dj-database-url` and `psycopg2-binary` are included for PostgreSQL support.
+
+## 0. Instant Public Link (For Demos)
+If you just want to show a friend quickly without setting up a server, use **Localtunnel** or **Ngrok**.
+
+**Method A: Localtunnel (Requires Node.js)**
+1. Open a new terminal.
+2. Run: `npx localtunnel --port 8000`
+3. It will generate a link like `https://warm-river-45.loca.lt`.
+4. Copy that link and open it on any device.
+   * *Note: You might need to enter a password provided on the page.*
+
+**Method B: Ngrok (More reliable)**
+1. Download [ngrok](https://ngrok.com/).
+2. Run: `ngrok http 8000`
+3. Copy the `https://...` link.
+
+---
+
+## 1. Prepare for Production (Render / AWS)
+
+```python
+import dj_database_url
+# In settings.py, replace DATABASES with:
+DATABASES = {
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+}
+```
+*(Note: Attempt this change before deploying)*
+
+## 2. Procfile
+Create a `Procfile` in the root directory:
+```
+web: gunicorn ecoswap_core.wsgi
+```
+
+## 3. Render.com Deployment
+1. Connect your GitHub repository.
+2. Select "Web Service".
+3. Build Command: `pip install -r requirements.txt && python manage.py migrate`
+4. Start Command: `gunicorn ecoswap_core.wsgi`
+5. **Environment Variables**: Add `GROQ_API_KEY` and `SECRET_KEY` in Render dashboard.
+
+## 4. AWS App Runner
+1. Push code to GitHub.
+2. Link repo to AWS App Runner.
+3. Configure build: `pip install -r requirements.txt`
+4. Configure start: `gunicorn ecoswap_core.wsgi`
+5. Add Env vars in configuration.
