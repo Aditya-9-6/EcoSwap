@@ -21,10 +21,12 @@ If you just want to show a friend quickly without setting up a server, use **Loc
 
 ---
 
-## 1. Prepare for Production (Render / AWS)
+## 1. Prepare for Production (Render)
 
-```python
-import dj_database_url
+**CRITICAL: You must set the Build Command in Render Settings to:**
+`pip install -r requirements.txt && python manage.py migrate`
+
+If you don't do this, the database tables will not exist, and the app will crash.
 # In settings.py, replace DATABASES with:
 DATABASES = {
     'default': dj_database_url.config(default='sqlite:///db.sqlite3')
