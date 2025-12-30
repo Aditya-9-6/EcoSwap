@@ -29,7 +29,15 @@ def get_eco_alternatives(product_name):
     
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        # Robust Model Selection: Try Flash (New), Fallback to Pro (Stable)
+        model_name = 'gemini-1.5-flash'
+        try:
+            # Check availability (lightweight check) or just fail on first generate
+            model = genai.GenerativeModel(model_name)
+        except:
+            model_name = 'gemini-pro'
+            model = genai.GenerativeModel(model_name)
 
         # --- RAG: Retrieval Step ---
         # 1. Load CSV (Simple linear search for demo, Vector DB better for large scale)
@@ -76,7 +84,16 @@ def get_eco_alternatives(product_name):
         Do not add any markdown formatting (like ```json). Ensure strictly valid JSON.
         """
         
-        response = model.generate_content(prompt)
+        try:
+            response = model.generate_content(prompt)
+        except Exception as e:
+            if "404" in str(e) or "not found" in str(e).lower():
+                print(f"Gemini 1.5 Flash failed ({e}). Retrying with Gemini Pro...")
+                model = genai.GenerativeModel('gemini-pro')
+                response = model.generate_content(prompt)
+            else:
+                raise e # Re-raise if it's not a model not found error
+        
         content = response.text
         
         # Cleanup markdown if present
