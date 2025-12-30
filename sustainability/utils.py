@@ -101,6 +101,19 @@ def get_eco_alternatives(product_name):
         data = json.loads(content)
         return data
     except Exception as e:
+        # Fallback: If AI fails but we have CSV matches, use them!
+        if found_matches:
+            print(f"Gemini failed ({e}), but using CSV matches.")
+            results = []
+            for match in found_matches:
+                results.append({
+                    "name": match['Alternative'],
+                    "impact_score": match['ImpactScore'],
+                    "link": match['Link'],
+                    "description": match['Description']
+                })
+            return results
+
         print(f"Error fetching alternatives from Gemini: {e}. Returning Mock Data.")
         # DEBUG: Show error in UI
         return [
